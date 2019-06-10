@@ -34,10 +34,46 @@ namespace ApiTester
 
         public async Task RunTest(Context context)
         {
-            foreach (var testStep in _steps)
+            var isPass = true;
+            var exit = false;
+            for (int i = 0; i < _steps.Count; i++)
             {
-                await testStep.ExecuteStep(context);
+                if(exit) break;
+                var stepName = _steps[i].Name;
+                context.Log($"Started Step {i} with {stepName}");
+                try
+                {
+                    var result = await _steps[i].ExecuteStep(context);
+                    switch (result)
+                    {
+                        case StepResult.Pass:
+                            context.Log($"Passed: Started Step {i} with {stepName}");
+                            break;
+                        case StepResult.Fail:
+                            context.Log($"Failed: Started Step {i} with {stepName}");
+                            isPass = false;
+                            break;
+                        case StepResult.FailAndBreak:
+                            context.Log($"Failed and Broke: Started Step {i} with {stepName}");
+                            isPass = false;
+                            exit = true;
+                            break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    context.Log($"Failed due to Exception: Started Step {i} with {stepName} {e.StackTrace}");
+                }
+                context.Log("");
             }
+
+            foreach (var log in context.GetLogs())
+            {
+                Console.WriteLine(log);
+            }
+
+            if (!isPass) throw new Exception("Failed");
         }
+        
     }
 }

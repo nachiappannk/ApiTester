@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using ApiTester;
 using NUnit.Framework;
@@ -16,20 +17,31 @@ namespace Tests
         [Test]
         public async Task Test1()
         {
-            var context = new Context(new Config(new Dictionary<string, string>(){{"param1", "value1"}}));
+            //print logs
+            //Get test result
+            //Exception
+            //Exception Continutation
+            //Returned results
+            
 
+
+
+            var context = new Context(new Config(new Dictionary<string, string>(){{"param1", "value1"}}));
+            context.SetService<HttpClient>("httpClient", new HttpClient());
             await new TestCase()
-                .AddStep(x => Console.WriteLine("FirstStep"))
+                .AddStep(x => x.Log("FirstStep"))
                 .AddStep(async (x) =>
                 {
-                    await Task.Delay(5000);
-                    Console.WriteLine("Second test");
+                    var httpClient = x.GetService<HttpClient>("httpClient");
+                    x.Log("Hash code is "+httpClient.GetHashCode());
+                    await Task.Delay(1000);
+                    x.Log("Second test");
                     return StepResult.Fail;
                 })
-                .AddStep(async (x) => Console.WriteLine("Step 3"))
+                .AddStep(async (x) => x.Log("Step 3"))
                 .AddStep(x =>
                 {
-                    Console.WriteLine("Step 4");
+                    x.Log("Step 4");
                     return StepResult.Pass;
                 })
                 .RunTest(context);

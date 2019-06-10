@@ -49,9 +49,9 @@ namespace ApiTester
 
         public string Name { get; }
 
-        public async Task ExecuteStep(IContext context)
+        public async Task<StepResult> ExecuteStep(IContext context)
         {
-            await _testStepCode.Invoke(context);
+            return await _testStepCode.Invoke(context);
         }
     }
 }
