@@ -17,16 +17,11 @@ namespace Tests
         [Test]
         public async Task Test1()
         {
-            //print logs
             //Get test result
-            //Exception
             //Exception Continutation
-            //Returned results
             
-
-
-
-            var context = new Context(new Config(new Dictionary<string, string>(){{"param1", "value1"}}));
+            var context = new Context(new Config(new Dictionary<string, string>(){{"param1", "value1"}, { "param2", "value2" }}),
+                new Config(new Dictionary<string, string>() { { "param1", "my-value" }}));
             context.SetService<HttpClient>("httpClient", new HttpClient());
             await new TestCase()
                 .AddStep(x => x.Log("FirstStep"))
@@ -34,6 +29,8 @@ namespace Tests
                 {
                     var httpClient = x.GetService<HttpClient>("httpClient");
                     x.Log("Hash code is "+httpClient.GetHashCode());
+                    x.Log(x.GetValue("param1"));
+                    x.Log(x.GetValue("param2"));
                     await Task.Delay(1000);
                     x.Log("Second test");
                     return StepResult.Fail;
@@ -42,7 +39,7 @@ namespace Tests
                 .AddStep(x =>
                 {
                     x.Log("Step 4");
-                    return StepResult.Pass;
+                    Assert.AreEqual(4,5);
                 })
                 .RunTest(context);
 
