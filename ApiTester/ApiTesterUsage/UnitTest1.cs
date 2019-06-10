@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using ApiTester;
 using NUnit.Framework;
@@ -41,8 +42,33 @@ namespace Tests
                     x.Log("Step 4");
                     Assert.AreEqual(4,5);
                 })
+                .AddStep(x => TestSteps.Login1(x))
                 .RunTest(context);
+
+            Action<IContext> s1;
+            Func<IContext, StepResult> s2;
+            Func<IContext, Task> s3;
+            Func<IContext, Task<StepResult>> s4;
+            s2 = TestSteps.Login1;
+
 
         }
     }
+
+
+    public static class TestSteps
+    {
+        public static async Task<StepResult> Login(IContext context)//s3 and s4
+        {
+            await Task.Delay(1000);
+            return StepResult.FailAndBreak;
+        }
+
+        public static StepResult Login1(IContext context)
+        {
+            return StepResult.FailAndBreak;
+        }
+    }
+
+
 }
