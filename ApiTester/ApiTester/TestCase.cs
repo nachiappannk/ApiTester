@@ -14,12 +14,24 @@ namespace ApiTester
             return this;
         }
 
+        public TestCase AddStep(Func<IContext, StepResult> action, string name = "un-named")
+        {
+            _steps.Add(new TestStep(action, name));
+            return this;
+        }
+
         public TestCase AddStep(Func<IContext, Task> action, string name = "un-named")
         {
             _steps.Add(new TestStep(action, name));
             return this;
         }
-        
+
+        public TestCase AddStep(Func<IContext, Task<StepResult>> action, string name = "un-named")
+        {
+            _steps.Add(new TestStep(action, name));
+            return this;
+        }
+
         public async Task RunTest(Context context)
         {
             foreach (var testStep in _steps)

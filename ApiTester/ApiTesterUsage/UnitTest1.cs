@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using ApiTester;
 using NUnit.Framework;
 
 namespace Tests
@@ -10,9 +14,26 @@ namespace Tests
         }
 
         [Test]
-        public void Test1()
+        public async Task Test1()
         {
-            Assert.Pass();
+            var context = new Context(new Config(new Dictionary<string, string>(){{"param1", "value1"}}));
+
+            await new TestCase()
+                .AddStep(x => Console.WriteLine("FirstStep"))
+                .AddStep(async (x) =>
+                {
+                    await Task.Delay(5000);
+                    Console.WriteLine("Second test");
+                    return StepResult.Fail;
+                })
+                .AddStep(async (x) => Console.WriteLine("Step 3"))
+                .AddStep(x =>
+                {
+                    Console.WriteLine("Step 4");
+                    return StepResult.Pass;
+                })
+                .RunTest(context);
+
         }
     }
 }
